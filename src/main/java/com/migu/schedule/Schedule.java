@@ -23,7 +23,7 @@ public class Schedule
 
     private int threshold = 0;
 
-    Comparator<TaskInfo> comparator = (o1, o2) -> (o1.getTaskId() - o2.getTaskId());
+    Comparator<TaskInfo> taskIdComparator = (o1, o2) -> (o1.getTaskId() - o2.getTaskId());
 
     Comparator<TaskInfo> nodeIdComparator = (o1, o2) -> (o1.getNodeId() - o2.getNodeId());
 
@@ -31,6 +31,12 @@ public class Schedule
 
     public int init()
     {
+        nodeList.clear();
+        taskList.clear();
+        status.clear();
+        task.clear();
+        tmp.clear();
+        threshold = 0;
         return ReturnCodeKeys.E001;
     }
 
@@ -162,7 +168,7 @@ public class Schedule
         {
             tasks.addAll(status.get(nodeId));
         }
-        Collections.sort(tasks, comparator);
+        Collections.sort(tasks, taskIdComparator);
         System.out.println(tasks);
         return ReturnCodeKeys.E015;
     }
