@@ -117,15 +117,15 @@ public class Schedule
             while (it.hasNext())
             {
                 Integer taskId = it.next();
-                int nodeId = findNode();
+                int nodeId = node();
                 List<TaskInfo> taskInfos = status.get(nodeId);
                 TaskInfo taskInfo = new TaskInfo();
                 taskInfo.setTaskId(taskId);
                 taskInfo.setNodeId(nodeId);
                 taskInfos.add(taskInfo);
                 tmpTasks.remove(new Integer(taskId));
-                insertSameTask(taskId);
-                balanced = calcBalance(nodeId);
+                same(taskId);
+                balanced = balance(nodeId);
                 break;
             }
             if (tmpTasks.size() == 0 && !balanced)
@@ -173,7 +173,7 @@ public class Schedule
         return ReturnCodeKeys.E015;
     }
 
-    private int countTasks(List<TaskInfo> taskInfos)
+    private int taskSum(List<TaskInfo> taskInfos)
     {
         int result = 0;
         for (TaskInfo taskInfo : taskInfos)
@@ -183,7 +183,7 @@ public class Schedule
         return result;
     }
 
-    private int findNode()
+    private int node()
     {
         int tmpId = -1;
         int min = Integer.MAX_VALUE;
@@ -196,7 +196,7 @@ public class Schedule
             }
             else
             {
-                int w = countTasks(taskInfos);
+                int w = taskSum(taskInfos);
                 if (w < min)
                 {
                     min = w;
@@ -207,9 +207,9 @@ public class Schedule
         return tmpId;
     }
 
-    private boolean calcBalance(int nodeId)
+    private boolean balance(int nodeId)
     {
-        int source = countTasks(status.get(nodeId));
+        int source = taskSum(status.get(nodeId));
         for (Integer id : nodeList)
         {
             if (!id.equals(nodeId))
@@ -221,7 +221,7 @@ public class Schedule
                 }
                 else
                 {
-                    t = countTasks(status.get(id));
+                    t = taskSum(status.get(id));
                 }
                 if (Math.abs(t - source) > this.threshold)
                 {
@@ -232,7 +232,7 @@ public class Schedule
         return true;
     }
 
-    private void insertSameTask(int taskId)
+    private void same(int taskId)
     {
         int time = task.get(taskId);
         List<Integer> list = tmp.get(time);
